@@ -38,7 +38,7 @@ jobs:
   build-and-push-arm:
     if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
     environment: production
-    runs-on: [ARM64]
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: Prepare Tags
@@ -59,6 +59,7 @@ jobs:
           push: true
           context: .
           file: ./docker/golang.Dockerfile
+          platforms: linux/arm64
           tags: ghcr.io/${{ env.REPO_NAME }}:latest-arm,ghcr.io/${{ env.REPO_NAME }}:${{ env.SAFE_REF_NAME }}-arm
 
   merge-manifest:
