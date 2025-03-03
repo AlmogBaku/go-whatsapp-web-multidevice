@@ -245,6 +245,7 @@ func runRest(_ *cobra.Command, _ []string) {
 	if config.DBKeysURI != "" {
 		dbKeys = whatsapp.InitWaDB(config.DBKeysURI)
 	}
+
 	cli := whatsapp.InitWaCLI(db, dbKeys)
 
 	// Service
