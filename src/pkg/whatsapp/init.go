@@ -54,11 +54,11 @@ var (
 )
 
 // InitWaDB initializes the WhatsApp database connection
-func InitWaDB(DBURI string) *sqlstore.Container {
+func InitWaDB(ctx context.Context, DBURI string) *sqlstore.Container {
 	log = waLog.Stdout("Main", config.WhatsappLogLevel, true)
 	dbLog := waLog.Stdout("Database", config.WhatsappLogLevel, true)
 
-	storeContainer, err := initDatabase(dbLog, DBURI)
+	storeContainer, err := initDatabase(ctx, dbLog, DBURI)
 	if err != nil {
 		log.Errorf("Database initialization error: %v", err)
 		panic(pkgError.InternalServerError(fmt.Sprintf("Database initialization error: %v", err)))
@@ -68,19 +68,19 @@ func InitWaDB(DBURI string) *sqlstore.Container {
 }
 
 // initDatabase creates and returns a database store container based on the configured URI
-func initDatabase(dbLog waLog.Logger, DBURI string) (*sqlstore.Container, error) {
+func initDatabase(ctx context.Context, dbLog waLog.Logger, DBURI string) (*sqlstore.Container, error) {
 	if strings.HasPrefix(DBURI, "file:") {
-		return sqlstore.New("sqlite3", DBURI, dbLog)
+		return sqlstore.New(ctx, "sqlite3", DBURI, dbLog)
 	} else if strings.HasPrefix(DBURI, "postgres:") {
-		return sqlstore.New("postgres", DBURI, dbLog)
+		return sqlstore.New(ctx, "postgres", DBURI, dbLog)
 	}
 
 	return nil, fmt.Errorf("unknown database type: %s. Currently only sqlite3(file:) and postgres are supported", DBURI)
 }
 
 // InitWaCLI initializes the WhatsApp client
-func InitWaCLI(storeContainer, keysStoreContainer *sqlstore.Container) *whatsmeow.Client {
-	device, err := storeContainer.GetFirstDevice()
+func InitWaCLI(ctx context.Context, storeContainer, keysStoreContainer *sqlstore.Container) *whatsmeow.Client {
+	device, err := storeContainer.GetFirstDevice(ctx)
 	if err != nil {
 		log.Errorf("Failed to get device: %v", err)
 		panic(err)

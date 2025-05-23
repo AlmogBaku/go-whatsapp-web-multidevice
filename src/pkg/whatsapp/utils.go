@@ -1,6 +1,7 @@
 package whatsapp
 
 import (
+	"context"
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/hex"
@@ -29,7 +30,7 @@ func ExtractMedia(storageLocation string, mediaFile whatsmeow.DownloadableMessag
 		return extractedMedia, nil
 	}
 
-	data, err := cli.Download(mediaFile)
+	data, err := cli.Download(context.TODO(), mediaFile)
 	if err != nil {
 		return extractedMedia, err
 	}

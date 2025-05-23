@@ -182,7 +182,7 @@ func initFlags() {
 	)
 }
 
-func runRest(_ *cobra.Command, _ []string) {
+func runRest(cmd *cobra.Command, _ []string) {
 	if config.AppDebug {
 		config.WhatsappLogLevel = "DEBUG"
 	}
@@ -240,13 +240,13 @@ func runRest(_ *cobra.Command, _ []string) {
 		}))
 	}
 
-	db := whatsapp.InitWaDB(config.DBURI)
+	db := whatsapp.InitWaDB(cmd.Context(), config.DBURI)
 	var dbKeys *sqlstore.Container
 	if config.DBKeysURI != "" {
-		dbKeys = whatsapp.InitWaDB(config.DBKeysURI)
+		dbKeys = whatsapp.InitWaDB(cmd.Context(), config.DBKeysURI)
 	}
 
-	cli := whatsapp.InitWaCLI(db, dbKeys)
+	cli := whatsapp.InitWaCLI(cmd.Context(), db, dbKeys)
 
 	// Service
 	appService := services.NewAppService(cli, db)
