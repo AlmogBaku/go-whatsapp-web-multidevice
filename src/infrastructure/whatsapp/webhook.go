@@ -5,7 +5,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"go.mau.fi/whatsmeow/types"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/aldinokemal/go-whatsapp-web-multidevice/config"
@@ -41,6 +43,14 @@ func createPayload(ctx context.Context, evt *events.Message) (map[string]interfa
 
 	if from := evt.Info.SourceString(); from != "" {
 		body["from"] = from
+		if strings.HasSuffix(body["from"].(string), "@lid") {
+			body["from_lid"] = body["from"]
+			jid, _ := types.ParseJID(body["from"].(string))
+			pn, _ := cli.Store.LIDs.GetPNForLID(context.Background(), jid)
+			if !pn.IsEmpty() {
+				body["from"] = pn.String()
+			}
+		}
 	}
 	if message.ID != "" {
 		body["message"] = message
