@@ -201,13 +201,13 @@ func initApp() {
 	}
 
 	ctx := context.Background()
-	db := whatsapp.InitWaDB(ctx, config.DBURI)
+	whatsappDB = whatsapp.InitWaDB(ctx, config.DBURI)
 	var dbKeys *sqlstore.Container
 	if config.DBKeysURI != "" {
 		dbKeys = whatsapp.InitWaDB(ctx, config.DBKeysURI)
 	}
 
-	whatsappCli = whatsapp.InitWaCLI(ctx, db, dbKeys)
+	whatsappCli = whatsapp.InitWaCLI(ctx, whatsappDB, dbKeys)
 
 	// Usecase
 	appUsecase = usecase.NewAppService(whatsappCli, whatsappDB)
