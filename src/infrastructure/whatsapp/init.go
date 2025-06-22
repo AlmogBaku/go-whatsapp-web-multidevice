@@ -70,7 +70,7 @@ func InitWaDB(ctx context.Context, DBURI string) *sqlstore.Container {
 func initDatabase(ctx context.Context, dbLog waLog.Logger, DBURI string) (*sqlstore.Container, error) {
 	if strings.HasPrefix(config.DBURI, "file:") {
 		return sqlstore.New(ctx, "sqlite3", DBURI, dbLog)
-	} else if strings.HasPrefix(config.DBURI, "postgres:") {
+	} else if strings.HasPrefix(DBURI, "postgres:") {
 		return sqlstore.New(ctx, "postgres", DBURI, dbLog)
 	}
 
